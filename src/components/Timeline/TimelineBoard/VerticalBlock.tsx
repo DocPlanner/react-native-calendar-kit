@@ -29,7 +29,11 @@ const VerticalBlock: React.FC<VerticalBlockProps> = ({
         key={`${dayIndex}_${i}`}
         top={startFixed - start}
         hour={endFixed - startFixed}
-        renderCustomUnavailableItem={renderCustomUnavailableItem}
+        renderCustomUnavailableItem={
+          renderCustomUnavailableItem
+            ? (props) => renderCustomUnavailableItem({ ...props, ...hour })
+            : undefined
+        }
       />
     );
   };
