@@ -112,12 +112,12 @@ export interface TimelineProps {
 }
 
 export interface UnavailableItemProps {
-  start: number;
-  end: number;
   timeIntervalHeight: SharedValue<number>;
-  hour: number;
-  width: number;
-  color: string;
+  start?: number;
+  end?: number;
+  hour?: number;
+  width?: number;
+  color?: string;
 }
 
 export type CalendarViewMode = 'day' | 'week' | 'threeDays' | 'workWeek';
