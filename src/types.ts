@@ -111,14 +111,11 @@ export interface TimelineProps {
   onTimeIntervalHeightChange?: (height: number) => void;
 }
 
-export interface UnavailableItemProps {
+export type UnavailableItemProps = {
   timeIntervalHeight: SharedValue<number>;
-  start?: number;
-  end?: number;
   hour?: number;
   width?: number;
-  color?: string;
-}
+} & Partial<UnavailableHour>;
 
 export type CalendarViewMode = 'day' | 'week' | 'threeDays' | 'workWeek';
 
@@ -397,6 +394,7 @@ export interface RangeTime {
 export interface UnavailableHour {
   start: number;
   end: number;
+  [key: string]: any;
 }
 
 export type UnavailableHoursStyle = Record<
