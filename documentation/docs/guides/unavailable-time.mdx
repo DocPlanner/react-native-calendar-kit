@@ -1,6 +1,3 @@
----
-sidebar_position: 8
----
 
 import UnavailableAllDays from './img/unavailable-all-days.png';
 import UnavailableWeekDay from './img/unavailable-week-day.png';
@@ -183,3 +180,75 @@ const _renderCustomUnavailableItem = useCallback(
 ```
 
 <img src={CustomItem} style={{ maxWidth: '320px' }} />
+
+When using a `renderCustomUnavailableItem` you can also send additional information through the `unavailableHours` prop along with the `start` and `end` values. This is useful, for example, for setting a different style or extra info per Unavailable item.
+
+```jsx title="Example"
+
+// Sending "color" as extra prop
+const unavailableHours = [
+  { start: 0, end: 7, color: 'red'},
+  { start: 18, end: 24, color: 'blue' },
+];
+
+const _renderCustomUnavailableItem = useCallback(
+  (props: UnavailableItemProps) => <CustomUnavailableItem {...props} />,
+  []
+);
+
+<TimelineCalendar
+  viewMode="week"
+  unavailableHours={unavailableHours}
+  renderCustomUnavailableItem={_renderCustomUnavailableItem}
+/>;
+```
+
+```jsx title="CustomUnavailableItem.tsx"
+import type { UnavailableItemProps } from '@howljs/calendar-kit';
+import React from 'react';
+import Animated, { useAnimatedProps } from 'react-native-reanimated';
+import Svg, { Defs, Line, Pattern, Rect } from 'react-native-svg';
+
+const AnimatedRect = Animated.createAnimatedComponent(Rect);
+
+const CustomUnavailableItem = (props: UnavailableItemProps) => {
+  const patternSize = 5;
+
+  const rectProps = useAnimatedProps(() => ({
+    height: props.hour * props.timeIntervalHeight.value,
+  }));
+
+  return (
+    <Svg>
+      <Defs>
+        <Pattern
+          id="stripe-pattern"
+          patternUnits="userSpaceOnUse"
+          width={patternSize}
+          height={patternSize}
+          patternTransform="rotate(-45)"
+        >
+          <Line
+            x1={0}
+            y={0}
+            x2={0}
+            y2={patternSize + 5}
+            stroke={props.color} // uses the props sent from the unavailableHours
+            strokeWidth={1.5}
+            strokeLinecap="butt"
+          />
+        </Pattern>
+      </Defs>
+      <AnimatedRect
+        x="0"
+        y="0"
+        width="100%"
+        fill="url(#stripe-pattern)"
+        animatedProps={rectProps}
+      />
+    </Svg>
+  );
+};
+
+export default CustomUnavailableItem;
+```
