@@ -19,9 +19,13 @@ import useTimelineScroll from './useTimelineScroll';
 
 interface useDragCreateGesture {
   onDragCreateEnd?: (data: { start: string; end: string }) => void;
+  onDragCreateStart?: () => void;
 }
 
-const useDragCreateGesture = ({ onDragCreateEnd }: useDragCreateGesture) => {
+const useDragCreateGesture = ({
+  onDragCreateEnd,
+  onDragCreateStart,
+}: useDragCreateGesture) => {
   const {
     timeIntervalHeight,
     spaceFromTop,
@@ -40,7 +44,8 @@ const useDragCreateGesture = ({ onDragCreateEnd }: useDragCreateGesture) => {
     dragCreateInterval,
     dragStep,
     viewMode,
-    isDragCreateActive,
+    //isDragCreateActive,
+    isEventPlaceholderActive,
     useHaptic,
     tzOffset,
     start,
@@ -184,18 +189,24 @@ const useDragCreateGesture = ({ onDragCreateEnd }: useDragCreateGesture) => {
   );
 
   const isTouchesUp = useSharedValue(false);
+  const isDragCreateStart = useSharedValue(false);
+
   const dragCreateGesture = Gesture.Pan()
     .minPointers(1)
     .manualActivation(true)
     .onTouchesDown((event, stateManager) => {
       if (event.numberOfTouches > 1) {
         stateManager.fail();
-        isDragCreateActive.value = false;
+        //! isDragCreateActive.value = false;
+        isEventPlaceholderActive.value = false;
+        isDragCreateStart.value = false;
       }
     })
     .onTouchesMove((_e, stateManager) => {
-      if (isDragCreateActive.value) {
+      //! if (isDragCreateActive.value) {
+      if (isEventPlaceholderActive.value) {
         stateManager.activate();
+        isDragCreateStart.value = true;
       }
     })
     .onUpdate((event) => {
@@ -205,9 +216,12 @@ const useDragCreateGesture = ({ onDragCreateEnd }: useDragCreateGesture) => {
       gestureEvent.value = event;
     })
     .onTouchesUp(() => {
-      if (isDragCreateActive.value) {
+      //! if (isDragCreateActive.value) {
+      isDragCreateStart.value = false;
+      if (isEventPlaceholderActive.value) {
         isTouchesUp.value = true;
-        isDragCreateActive.value = false;
+        //isDragCreateActive.value = false; // avoid placeholder to be cleared when user finish dragging
+        //isEventPlaceholderActive.value = false;
       }
     });
 
@@ -224,16 +238,29 @@ const useDragCreateGesture = ({ onDragCreateEnd }: useDragCreateGesture) => {
       }
     }
   );
+  const _onDragStart = () => {
+    onDragCreateStart?.();
+  };
+  useAnimatedReaction(
+    () => isDragCreateStart.value,
+    (dragStarted) => {
+      if (dragStarted) {
+        runOnJS(_onDragStart)();
+      }
+    }
+  );
 
   useAnimatedReaction(
-    () => isDragCreateActive.value,
+    //! () => isDragCreateActive.value,
+    () => isEventPlaceholderActive.value,
     (active) => {
       runOnJS(setIsDraggingCreate)(active);
     }
   );
 
-  const onLongPress = (e: GestureResponderEvent) => {
-    isDragCreateActive.value = true;
+  const showEventPlaceholder = (e: GestureResponderEvent) => {
+    //! isDragCreateActive.value = true;
+    isEventPlaceholderActive.value = true;
     const posX = e.nativeEvent.locationX + hourWidth;
     const posY = e.nativeEvent.locationY + spaceFromTop - offsetY.value;
     const { x, y } = calcPosition(posX, posY, dragStep);
@@ -245,6 +272,9 @@ const useDragCreateGesture = ({ onDragCreateEnd }: useDragCreateGesture) => {
     }
   };
 
+  const onLongPress = showEventPlaceholder;
+  const onPress = showEventPlaceholder;
+
   return {
     dragCreateGesture,
     dragXPosition,
@@ -252,6 +282,7 @@ const useDragCreateGesture = ({ onDragCreateEnd }: useDragCreateGesture) => {
     isDraggingCreate,
     currentHour,
     onLongPress,
+    onPress,
   };
 };
 

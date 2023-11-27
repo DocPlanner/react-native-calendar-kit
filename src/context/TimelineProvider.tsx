@@ -69,7 +69,8 @@ interface TimelineCalendarContextValue extends CustomTimelineProviderProps {
     | UnavailableHour[]
     | { [weekDay: string]: UnavailableHour[] };
   firstDate: React.MutableRefObject<{ [key in CalendarViewMode]?: string }>;
-  isDragCreateActive: SharedValue<boolean>;
+  isDragCreateActive: SharedValue<boolean>; //! Remove this in favor of isEventPlaceholderActive
+  isEventPlaceholderActive: SharedValue<boolean>;
   pinchRef: React.MutableRefObject<GestureType | undefined>;
   hourFormat?: string;
   tzOffset: string;
@@ -106,6 +107,7 @@ const TimelineProvider: React.FC<TimelineProviderProps> = (props) => {
     isShowHalfLine = true,
     allowPinchToZoom = false,
     allowDragToCreate = false,
+    allowTapToCreate = false,
     dragCreateInterval = DEFAULT_PROPS.DRAG_CREATE_INTERVAL,
     dragStep = DEFAULT_PROPS.DRAG_STEP,
     showNowIndicator = true,
@@ -166,7 +168,8 @@ const TimelineProvider: React.FC<TimelineProviderProps> = (props) => {
   const minTimeIntervalHeight = useSharedValue(
     initialMinTimeIntervalHeight || 0
   );
-  const isDragCreateActive = useSharedValue(false);
+  const isDragCreateActive = useSharedValue(false); //! Remove this in favor of isEventPlaceholderActive
+  const isEventPlaceholderActive = useSharedValue(false);
 
   const offsetY = useSharedValue(0);
 
@@ -243,6 +246,7 @@ const TimelineProvider: React.FC<TimelineProviderProps> = (props) => {
       offsetY,
       allowPinchToZoom,
       allowDragToCreate,
+      allowTapToCreate,
       dragCreateInterval,
       dragStep,
       unavailableHours,
@@ -250,7 +254,8 @@ const TimelineProvider: React.FC<TimelineProviderProps> = (props) => {
       firstDate,
       overlapEventsSpacing,
       rightEdgeSpacing,
-      isDragCreateActive,
+      isDragCreateActive, //! Remove this in favor of isEventPlaceholderActive
+      isEventPlaceholderActive,
       pinchRef,
       scrollToNow,
       locale,
@@ -292,6 +297,7 @@ const TimelineProvider: React.FC<TimelineProviderProps> = (props) => {
     offsetY,
     allowPinchToZoom,
     allowDragToCreate,
+    allowTapToCreate,
     dragCreateInterval,
     dragStep,
     unavailableHours,
@@ -299,6 +305,7 @@ const TimelineProvider: React.FC<TimelineProviderProps> = (props) => {
     overlapEventsSpacing,
     rightEdgeSpacing,
     isDragCreateActive,
+    isEventPlaceholderActive,
     scrollToNow,
     locale,
     isShowHeader,

@@ -51,6 +51,8 @@ export interface TimelineProps {
   onPressDayNum?: (date: string) => void;
   /** Callback function will be called when the create box is dropped */
   onDragCreateEnd?: (props: RangeTime) => void;
+  /** Callaback function will be called when the create box starts being dragged */
+  onDragCreateStart?: () => void;
   /** Callback function will be called when time slots view is pressed */
   onPressBackground?: (date: string, event: GestureResponderEvent) => void;
   /** Callback function will be called when time slots view is long pressed */
@@ -221,6 +223,9 @@ export interface TimelineProviderProps {
 
   /** Enable drag and drop to create event */
   allowDragToCreate?: boolean;
+
+  /** Enable tap to create event */
+  allowTapToCreate?: boolean;
 
   /** Enable pinch to scale height of the calendar */
   allowPinchToZoom?: boolean;
