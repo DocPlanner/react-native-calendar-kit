@@ -216,8 +216,8 @@ const useDragCreateGesture = ({
       gestureEvent.value = event;
     })
     .onTouchesUp(() => {
-      //! if (isDragCreateActive.value) {
       isDragCreateStart.value = false;
+      //! if (isDragCreateActive.value) {
       if (isEventPlaceholderActive.value) {
         isTouchesUp.value = true;
         //isDragCreateActive.value = false; // avoid placeholder to be cleared when user finish dragging
