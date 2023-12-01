@@ -41,7 +41,9 @@ const Timeline: React.ForwardRefRenderFunction<
     renderDayBarItem,
     onPressDayNum,
     onDragCreateEnd,
+    onDragCreateStart,
     onLongPressBackground,
+    onPressBackground,
     isLoading,
     events,
     selectedEvent,
@@ -244,8 +246,10 @@ const Timeline: React.ForwardRefRenderFunction<
     dragYPosition,
     currentHour,
     onLongPress,
+    onPress,
   } = useDragCreateGesture({
     onDragCreateEnd,
+    onDragCreateStart,
   });
 
   const _onLongPressBackground = (
@@ -256,6 +260,12 @@ const Timeline: React.ForwardRefRenderFunction<
       onLongPress(event);
     }
     onLongPressBackground?.(date, event);
+  };
+  const _onPressBackground = (date: string, event: GestureResponderEvent) => {
+    if (allowDragToCreate && !selectedEvent) {
+      onPress(event);
+    }
+    onPressBackground?.(date, event);
   };
 
   const groupedEvents = useMemo(
@@ -304,6 +314,7 @@ const Timeline: React.ForwardRefRenderFunction<
             isDragging={isDraggingCreate}
             isLoading={isLoading}
             onLongPressBackground={_onLongPressBackground}
+            onPressBackground={_onPressBackground}
           />
         </GestureDetector>
         {isDraggingCreate && (
