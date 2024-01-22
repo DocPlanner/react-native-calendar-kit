@@ -138,12 +138,11 @@ const EventBlock = ({
 };
 
 const areEqual = (prev: EventBlockProps, next: EventBlockProps) => {
-  const { event: prevEvent, theme: prevTheme, ...prevOther } = prev;
-  const { event: nextEvent, theme: nextTheme, ...nextOther } = next;
+  const { event: prevEvent, theme: prevTheme } = prev;
+  const { event: nextEvent, theme: nextTheme } = next;
   const isSameEvent = isEqual(prevEvent, nextEvent);
   const isSameTheme = isEqual(prevTheme, nextTheme);
-  const isSameOther = shallowEqual(prevOther, nextOther);
-  return isSameEvent && isSameTheme && isSameOther;
+  return isSameEvent && isSameTheme;
 };
 
 export default memo(EventBlock, areEqual);
